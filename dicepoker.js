@@ -1,157 +1,453 @@
-let comDie = {
-    die1: diceRoll(),
-    die2: diceRoll(),
-}
+//////////////////
+//Global variables
+//////////////////
 
-let playerHand = {
-    die1: diceRoll(),
-    die2: diceRoll(),
-    die3: diceRoll(),
-    die4: diceRoll(), //just for testing
-    die5: diceRoll()  //just for testing
-}
-
-const playerFullHand = Object.values(playerHand);
-console.log(playerFullHand);
-
-let opponent1Hand = {
-    die1: diceRoll(),
-    die2: diceRoll(),
-    die3: diceRoll(),
-    die4: diceRoll(), //just for testing
-    die5: diceRoll()  //just for testing
-}
-
-const opponentFullHand = Object.values(opponent1Hand);
-console.log(opponentFullHand);
-
-let opponent2Hand = {
-    die1: diceRoll(),
-    die2: diceRoll(),
-    die3: diceRoll()
-}
-
-
-
-const gameRound = ['Round One', 'Round Two', 'Showdown']
-
-function diceRoll(){
-    let roll = Math.floor(Math.random() * 6) + 1;
-    return roll; 
-}
-
-
-//console.log('Rolling dice...');
-console.log(`You rolled ${playerHand.die1}, ${playerHand.die2}, and ${playerHand.die3}`);
-
-//console.log('Do you want to bet?')
-
-let testHand1 = [3,2,1,4,5];
-let testHand2 = [1,3,3,4,5];
-let testHand3 = [4,4,2,2,2];
-let testHand4 = [6,6,6,6,6];
-let testHand5 = [3,3,3,3,4];
-let testHand6 = [1,3,3,1,3];
-let testHand7 = [1,1,1,3,3];
-let testHand8 = [2,3,4,5,6];
-let testHand9 = [1,2,2,2,6];
-let testHand10 = [1,2,2,3,3];
-let testHand11 = [1,2,3,4,6];
-
-let valueScoreP = 0;
-let valueScoreO = 0;
-
-function calculateValueScore(arr, value) {
-    for (let a of arr) {
-      value += a;
+class Person {
+    constructor(name, skill, risk, hand, handName, handScore, handValue, money, winner) {
+        this.name = name;
+        this.skill = skill;
+        this.risk = risk;
+        this.hand = hand;
+        this.handName = handName;
+        this.handScore = handScore;
+        this.handValue = handValue;
+        this.money = money;
+        this.winner = winner; // 2 is winner, 1 is draw, 0 is loser - this can be changed to a boolean
+        this.playingRound = playingRound;
     }
-    return value;
+}
+
+let player = new Person('TJ', 0, 0, [], '', 0, 0, 100.00, 0, true); //can be prompted for name but I removed as it was too annoying for testing
+let opponent1 = new Person('Darrell', 5, 5, [], '', 0, 0, 100.00, 0, true);
+let opponent2 = new Person('Gladys', 5, 5, [], '', 0, 0, 100.00, 0, true);
+let opponent3 = new Person('Dom', 5, 5, [], '', 0, 0, 100.00, 0, true);
+let opponent4 = new Person('Marky Mark', 5, 5, [], '', 0, 0, 100.00, 0, true);
+
+let playerList = [player, opponent1, opponent2, opponent3, opponent4]
+
+const gameDisplay = document.querySelector('#gameNumber');
+const gameButton = document.querySelector('#gameButton');
+const roundDisplay = document.querySelector('#round');
+const roundButton = document.querySelector('#roundButton');
+
+
+const potDisplay = document.querySelector('#pot');
+const playerMoneyDisplay = document.querySelector('#playerMoney');
+
+const playerListDisplay = document.querySelector('#playerList');
+
+const communalRollDisplay = document.querySelector('#communalRoll');
+const communalRollButton1 = document.querySelector('#rollButtonC1');
+const communalRollButton2 = document.querySelector('#rollButtonC2');
+
+
+const playerRollDisplay = document.querySelector('#playerRoll');
+const playerRollButton = document.querySelector('#rollButtonP');
+
+const playerHandNumberDisplay = document.querySelector('#playerHand');
+const playerHandNameDisplay = document.querySelector('#hand');
+const betButton = document.querySelector('#betButton');
+const raiseButton = document.querySelector('#raiseButton');
+const foldButton = document.querySelector('#foldButton');
+const seeButton = document.querySelector('#seeButton');
+const showButton = document.querySelector('#showButton');
+
+const actionButtons = document.querySelectorAll('.actionButtons');
+
+const allButtons = document.querySelectorAll('button');
+allButtons.forEach(btn =>{
+    btn.disabled = true;
+    gameButton.disabled = false;
+    playerRollButton.disabled = false;
+})
+
+let hand = '';
+let handScore = 0;
+let gameCounter = 1;
+let roundCounter = 0;
+let isStartofGame = true;
+//let playerMoney = 0;
+let pot = 0;
+let communalRoll1 = [];
+let communalRoll2 = [];
+
+
+
+const gameRound = ['Pregame', 'One', 'Two', 'Showdown']
+
+
+
+//////////////////////////////////////
+//Button Listeners - in order of usage
+//////////////////////////////////////
+
+//Button to start a game and increase the game counter
+gameButton.addEventListener('click', function(){
+    gameDisplay.textContent = gameCounter++;
+    roundDisplay.textContent = gameRound[roundCounter];
+    disable(gameButton);
+    enable(roundButton);
+    return gameCounter;
+})
+
+//Button to set the player list and the pot money for the first game that is started
+gameButton.addEventListener('click', function(){
+    if(isStartofGame){
+        // prompt('How much money do you want to start with? (multiples of 5)'); - removed for now for speedier testing - set each player to have 100 instead
+        playerMoneyDisplay.textContent = playerList[0].money;
+        //shuffle(playerList); - removed for now for testing purposes
+        for (let i = 0; i < playerList.length; i++){
+            let li = document.createElement('li');
+            li.innerText = playerList[i].name ;
+            playerListDisplay.appendChild(li);
+        }
+    } else{
+        playerList.unshift(playerList.pop()) //need to test this
+    }
+    
+
+    communalRollDisplay.textContent = null;
+    playerRollDisplay.textContent = null;
+    playerHandNumberDisplay.textContent = null;
+    playerHandNameDisplay.textContent = null;
+
+    return isStartofGame = false;
+})
+
+//Button to start a round - at the moment this increases and resets the round counter, as well as disabling and enabling action buttons. The idea is that this will be improved to control betting e.g. bets will need to be placed at the start of the round
+roundButton.addEventListener('click', function(){
+    if (roundCounter < 3){
+        roundCounter++;
+    } else{
+        roundCounter = 0;
+    }
+    roundDisplay.textContent = gameRound[roundCounter];
+    disable(roundButton);
+    enable(playerRollButton);
+    enableActionButtons();
+    return gameRound;
+})
+
+
+//Button to roll the first three dice for each player and add it to their hand. It also calculates the hand value, hand score, and hand name of their 3-dice roll 
+playerRollButton.addEventListener('click', function(){
+    playersRoll();
+    rollSort();
+    playerRollDisplay.textContent = playerList[0].hand;
+    playerHandNumberDisplay.textContent = playerList[0].hand;
+    disable(playerRollButton);
+    enable(communalRollButton1);
+
+    for(let i = 0; i < playerList.length; i++){
+        calculateValueScore(playerList[i].hand, i); 
+    }
+
+    for(let i = 0; i < playerList.length; i++){
+        evaluatePlayerRoll(playerList[i].hand, i); 
+    }
+
+    console.log(`Hand value is: ${playerList[0].handValue}`)
+    console.log(`Hand score is: ${playerList[0].handScore}`)
+    console.log(`Hand score is: ${playerList[0].handName}`)
+
+    // return playerList[0].hand; - do I need this
+})
+
+//Button to roll the first community dice. It also pushes that dice to all hands.
+communalRollButton1.addEventListener('click', function(){
+    diceRoll(communalRoll1)
+    
+    disable(communalRollButton1);
+    enable(communalRollButton2);
+
+    for(let i = 0; i < playerList.length; i++){
+        playerList[i].hand.push(communalRoll1[0]);
+    }
+    rollSort();
+
+    communalRollDisplay.textContent = communalRoll1;
+    playerHandNumberDisplay.textContent = playerList[0].hand;
+
+    //return hands; 
+})
+
+//Button to roll the second community dice. It also pushes that dice to all hands and evaluates those hands and value scores.
+communalRollButton2.addEventListener('click', function(){
+    diceRoll(communalRoll2)
+    
+    disable(communalRollButton2);
+    enable(showButton);
+
+    for(let i = 0; i < playerList.length; i++){
+        playerList[i].hand.push(communalRoll2[0]);
+    }
+    rollSort();
+
+    communalRollDisplay.textContent = communalRoll1.concat(communalRoll2);
+    playerHandNumberDisplay.textContent = playerList[0].hand;
+    
+    for(let i = 0; i < playerList.length; i++){
+        evaluateHand(playerList[i].hand, i); 
+    }
+
+    for(let i = 0; i < playerList.length; i++){
+        calculateValueScore(playerList[i].hand, i); 
+    }
+
+    //for testing
+    for(let i = 0; i < playerList.length; i++){
+        console.log(playerList[i].hand); 
+        
+    }
+
+    playerHandNameDisplay.textContent = playerList[0].handName;
+
+    console.log(playerList[0].handScore)
+    console.log(playerList[1].handScore)
+    console.log(playerList[2].handScore)
+    console.log(playerList[3].handScore)
+    console.log(playerList[4].handScore)
+
+})
+
+
+//Button to bet. It is set to always bet $5, which can be adjusted in the future.
+betButton.addEventListener('click', function(){
+    //pot += 5;
+    //bets the same for each player - will be changed
+    for (let i = 0; i < playerList.length; i++){
+        pot += 5;
+    }
+    potDisplay.textContent = pot;
+    return pot;
+})
+
+
+//Additional listener for the bet button which removed player money when they bet
+betButton.addEventListener('click', function(){
+    //playerList[0].money -= 5;
+
+    //bets the same for each player - will be changed
+    for (let i = 0; i < playerList.length; i++){
+        playerList[i].money -= 5;
+    }
+
+    if (playerList[0].money < 5){
+        disableActionButtons();
+    } 
+    playerMoneyDisplay.textContent = playerList[0].money;
+    //return playerMoney;
+})
+
+//The show button determines the final winner for the game
+showButton.addEventListener('click', function(){
+    determineWinner()
+    clearHands();
+    enable(gameButton);
+})
+
+
+
+
+
+////////////////////////
+//Functions 
+////////////////////////
+
+//Enables buttons with the class of action button (bet, raise, fold, see)
+function enableActionButtons(){
+    actionButtons.forEach(btn =>{
+        btn.disabled = false;
+    })
+}
+
+//Disables buttons with the class of action button (bet, raise, fold, see) 
+function disableActionButtons(){
+    actionButtons.forEach(btn =>{
+        btn.disabled = true;
+    })
+}
+
+
+//Basic dice roll function
+function diceRoll(hand){
+    let roll = Math.floor(Math.random() * 6) + 1;
+    return hand.push(roll); 
+}
+
+//Basic function to disable a button
+function disable(btn){
+    btn.disabled = true;
+}
+
+//Basic function to enable a button
+function enable(btn){
+    btn.disabled = false;
+}
+
+// Function to roll the first three dice for each player
+function playersRoll(){
+    for(let i = 0; i < playerList.length; i++){
+        diceRoll(playerList[i].hand)    
+        diceRoll(playerList[i].hand)    
+        diceRoll(playerList[i].hand)    
+    }
+}
+
+//Sorts the hand for every player (from smallest to largest number) in an array
+function rollSort(){
+    for(let i = 0; i < playerList.length; i++){
+        playerList[i].hand.sort(); 
+        // console.log(playerList[i].hand) // this is for testing
+    }
+}
+
+//Clears the hand scores of each player for the next round of calculation
+function clearHands(){
+    communalRoll1 = [];
+    communalRoll2 = [];
+    for (let i = 0; i < playerList.length; i++){
+        playerList[i].hand = [];
+        playerList[i].handScore = 0;
+        playerList[i].handValue = 0;
+        playerList[i].handName = '';
+    } 
+}
+
+//Evaluates the first roll of three dice - this can be used for each player
+function evaluatePlayerRoll(handArray, i){
+    if (handArray[0] === handArray[2]){
+        playerList[i].handScore = 4;
+        playerList[i].handName = 'Three-of-a-Kind';
+    } else if (handArray[0] === handArray[1] || handArray[1] === handArray[2]){
+        playerList[i].handScore = 2;
+        playerList[i].handName = 'Pair';
+    } else if (handArray === [1,2,3] || handArray === [2,3,4] || handArray === [3,4,5] || handArray === [4,5,6]){
+        playerList[i].handScore = 1;
+        playerList[i].handName = 'Three dice straight'; // this can be split later on based on probability e.g. a straight in the middle is worth more as it has more chance, low straight is worth less
+    }
+}
+
+//Function to evaluate a full hand array of fice dice
+function evaluateHand(handArray, i){ 
+    if (handArray[0] === handArray[4]){
+        playerList[i].handScore = 9;
+        playerList[i].handName = 'Five-of-a-Kind';
+    } else if(handArray[0] === handArray[3] || handArray[1] === handArray[4]){
+        playerList[i].handScore = 8;
+        playerList[i].handName = 'Four-of-a-Kind';
+    } else if(handArray[0] === handArray[2] && handArray[3] === handArray[4] || handArray[0] === handArray[1] && handArray[2] === handArray[4]){
+        playerList[i].handScore = 7;
+        playerList[i].handName = 'Full House';
+    } else if(handArray[0] === 2 && handArray[1] === 3 && handArray[2] === 4 && handArray[3] === 5 && handArray[4] === 6){
+        playerList[i].handScore = 6;
+        playerList[i].handName = 'Six-High Straight';
+    } else if(handArray[0] === 1 && handArray[1] === 2 && handArray[2] === 3 && handArray[3] === 4 && handArray[4] === 5){
+        playerList[i].handScore = 5;
+        playerList[i].handName = 'Five-High Straight';
+    } else if(handArray[0] === handArray[2] || handArray[1] === handArray[3] || handArray[2] === handArray[4]){
+        playerList[i].handScore = 4;
+        playerList[i].handName = 'Three-of-a-Kind';
+    } else if(  (handArray[0] === handArray[1] && handArray[2] === handArray[3]) || (handArray[0] === handArray[1] && handArray[3] === handArray[4]) || (handArray[1] === handArray[2] && handArray[3] === handArray[4])){
+        playerList[i].handScore = 3;
+        playerList[i].handName = 'Two Pair';
+    } else if (handArray[0] === handArray[1] || handArray[1] === handArray[2] || handArray[2] === handArray[3] || handArray[3] === handArray[4]){
+        playerList[i].handScore = 2;
+        playerList[i].handName = 'Pair';
+    } else{
+        playerList[i].handScore = 1;
+        playerList[i].handName = 'High Dice';
+    }
+
+    //return handScore;
+};
+
+//Sums the score for the player's first roll. This is not an ideal solution as it is only for the one roll but I couldn't figure out how to do it better
+function calculateValueScore(handArray, i) {
+    for (let p = 0; p < handArray.length; p++){
+        playerList[i].handValue = (handArray[0] + handArray[1] + handArray[2])
+    }
+    //return playerList;
   }
 
 
-
-function evaluateHand(arr){
-    
-    let hand = '';
-    let handScore = 0
-
-    const handArray = arr.sort();
-    // calculateValueScore(handArray);  
-
-
-    // Count the occurance of a number
-    // const occurrences = {};
-    // handArray.forEach((number) => {
-    //     occurrences[number] = (occurrences[number] || 0) + 1;
-    // });
-
-    // console.log(`The count for number 1 is: ${occurrences[1]}`)
-    
-
-    if (handArray[0] === handArray[4]){
-        handScore = 1;
-        hand = 'Five-of-a-Kind';
-    } else if(handArray[0] === handArray[3]){
-        handScore = 2;
-        hand = 'Four-of-a-Kind';
-    } else if(handArray[0] === handArray[2] && handArray[3] === handArray[4] || handArray[0] === handArray[1] && handArray[2] === handArray[4]){
-        handScore = 3;
-        hand = 'Full House';
-    } else if(handArray[0] === 2 && handArray[1] === 3 && handArray[2] === 4 && handArray[3] === 5 && handArray[4] === 6){
-        handScore = 4;
-        hand = 'Six-High Straight';
-    } else if(handArray[0] === 1 && handArray[1] === 2 && handArray[2] === 3 && handArray[3] === 4 && handArray[4] === 5){
-        handScore = 5;
-        hand = 'Five-High Straight';
-    } else if(handArray[0] === handArray[2] || handArray[1] === handArray[3] || handArray[2] === handArray[4]){
-        handScore = 6;
-        hand = 'Three-of-a-Kind';
-    } else if(  (handArray[0] === handArray[1] && handArray[2] === handArray[3]) || (handArray[0] === handArray[1] && handArray[3] === handArray[4]) || (handArray[1] === handArray[2] && handArray[3] === handArray[4])){
-        handScore = 7;
-        hand = 'Two Pair';
-    } else if (handArray[0] === handArray[1] || handArray[1] === handArray[2] || handArray[2] === handArray[3] || handArray[3] === handArray[4]){
-        handScore = 8;
-        hand = 'Pair';
-    } else{
-        handScore = 9;
-        hand = 'High Dice';
+//Shuffle function which would be used to shuffle the order of players - not in use at the moment
+function shuffle(array) {
+    let currentIndex = array.length,  randomIndex;
+  
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
     }
+  
+    return array;
+  }
 
+//Determines the winner based on the hand score and value of each player. This needs to be updated to provide pot to winner, and to split pot between joint winners
+function determineWinner(){
+    let highestScore = 0;
+    let winners = [];
 
-    // console.log(`You rolled: ${handArray[0]}, ${handArray[1]}, ${handArray[2]}, ${handArray[3]}, ${handArray[4]}`)
-    // console.log(`Value Score is: ${valueScore}`);
-    // console.log(`Hand Score is: ${handScore}`);
-    // console.log(`Hand is: ${hand}`);
-
-    return handScore
-};
-
-let playerHandScore = evaluateHand(playerFullHand);
-let playerHandValue = calculateValueScore(playerFullHand, valueScoreP);
-console.log(playerHandScore);
-console.log(playerHandValue);
-
-let opponentHandScore = evaluateHand(opponentFullHand);
-let opponentHandValue = calculateValueScore(opponentFullHand, valueScoreO)
-console.log(opponentHandScore);
-console.log(opponentHandValue);
-
-function evaluateWinner(p, o, pv, ov){
-    if (p < o){
-        console.log('Player wins!')
-    } else if(p > o){
-        console.log('Opponent wins!')
-    } else {
-        if (pv < ov){
-            console.log('Opponent wins!')    
-        } else if(pv > o){
-            console.log('Player wins!')
-        } else{
-            console.log('Split pot!')
+    for (let i = 0; i < playerList.length; i++) {
+        if (playerList[i].handScore > highestScore) {
+          highestScore = playerList[i].handScore;
         }
     }
+    
+    for (let i = 0; i < playerList.length; i++) {
+    if (playerList[i].handScore === highestScore) {
+        winners.push(playerList[i]);
+        }   
+    }
+
+    for (let i = 0; i < playerList.length; i++) {
+        if (winners.includes(playerList[i])) {
+            playerList[i].winner = 2;
+            console.log(`${playerList[i].name} is the winner`)
+        } else if (winners.length > 1) {
+            playerList[i].winner = 1;
+        } else {
+            playerList[i].winner = 0
+        }  
+    }
+
+    payout();
+
+    return playerList;
 }
 
-evaluateWinner(playerHandScore, opponentHandScore, playerHandValue, opponentHandValue);
+//Function to pay the pot money to all winners - first it counts the number of winners then divides and distributes the pot
+function payout(){
+    let winnerCount = 0;
+    for (let i = 0; i < playerList.length; i++){
+        if (playerList[i].winner == 2){
+            winnerCount ++;
+        } 
+    }
 
+    let potSplit = (pot / winnerCount);
+    potSplit = Math.round(potSplit * 100) / 100;
+    //potSplit.toFixed(2); // i will need to test this further for when there are three winners
 
+    for (let i = 0; i < playerList.length; i++){
+        if (playerList[i].winner == 2){
+            playerList[i].money = playerList[i].money + potSplit;
+        } 
+    }
+
+    pot = 0;
+
+    //console log for testing purposes
+    console.log(playerList[0].money)
+    console.log(playerList[1].money)
+    console.log(playerList[2].money)
+    console.log(playerList[3].money)
+    console.log(playerList[4].money)
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Dice Poker</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="dicepoker.js"></script>
+    </head>
+
+    <div class="container">
+        <body>
+            <h1>Dice Poker</h1>
+            <h2>Equipment:</h2>
+            <ul>
+                <li>Three standard dice for each player and two communal dice.</li>
+                <li>A cup for each player.</li>
+            </ul>
+            <h2>Game Setup:</h2>
+            <ul>
+                <li>Determine the order of play. You can either agree on a specific order or use a random method, such as rolling dice to determine the first player.</li>
+                <li>Each player starts with an equal amount of chips or agreed-upon currency.</li>
+            </ul>
+            <h2>Objective:</h2>
+            <ul>
+                <li>The goal is to have the highest-ranking poker hand at the end of the game (see below for hand rankings).</li>
+            </ul>
+            <h2>Gameplay:</h2>
+            <ul>
+                <li>The game consists of two rounds of betting and two dice rolls.</li>
+                <li>Before each round, players place an agreed-upon initial bet into the pot.</li>
+                <li>After each round, the player to the left of the first player becomes the new first player.</li>
+            </ul>
+            <h3>First Round:</h3>
+            <ol>
+                <li>Each player rolls their three dice privately.</li>
+                <li>Bets are made, starting with the first player.</li>
+                <li>Each player can either match the bet of the previous player, or fold, meaning they withdraw from the game.</li>
+            </ol>
+            <h3>Second Round:</h3>
+            <ol>
+                <li>The first player rolls one communal dice so that all players can see.</li>
+                <li>Players combine the communal die with their own to make a hand.</li>
+                <li>The round of betting is repeated.</li>
+            </ol>
+            <h3>Showdown:</h3>
+            <ul>
+                <li>The first player rolls the remaining communal die.</li>
+                <li>Players use this to complete their hand.</li>
+                <li>The final round of betting is repeated.</li>
+                <li>Remaining players reveal their hands and the winner takes all money in the pot.</li>
+            </ul>
+            <h2>Hand Rankings (Highest to lowest):</h2>
+            <ol>
+                <li>Five-of-a-Kind — All fice dice of the same value.</li>
+                <li>Four-of-a-Kind — Four dice of the same value.</li>
+                <li>Full House — A pair of one value and a three-of-a-kind of another.</li>
+                <li>Six High Straight — Dice with sequential values from two through six.</li>
+                <li>Five High Straight — Dice with sequential values one to fice. </li>
+                <li>Three-of-a-kind — Three dice of the same value.</li>
+                <li>Two Pairs — Two pairs of dice, each with the same value.</li>
+                <li>Pair — Two dice with the same value.</li>
+            </ol>
+            <ul>
+                <li>The winner of hands of the same kind is determined by the higher value of die e.g. a pair of sixes beats a pair of fours.</li>
+                <li>In the event of two players having a full house, add the values of the players hands, with the highest determining the winner e.g. player one has a pair of twos and a three-of-a-kind with fives, equalling 19. Player two has a pair of sixes and a three-of-a-kind with ones, equalling 15. Player one wins.</li>
+                <li>Ties are settled by a split pot.</li>
+            </ul>
+            </body>
+    </div>
+
+</html>
