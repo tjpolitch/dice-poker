@@ -3,7 +3,7 @@
 //////////////////
 
 class Person {
-    constructor(name, skill, risk, hand, handName, handScore, handValue, money, winner) {
+    constructor(name, skill, risk, hand, handName, handScore, handValue, risk, money, winner, playingRound) {
         this.name = name;
         this.skill = skill;
         this.risk = risk;
@@ -11,17 +11,18 @@ class Person {
         this.handName = handName;
         this.handScore = handScore;
         this.handValue = handValue;
+        this.risk = risk;
         this.money = money;
         this.winner = winner; // 2 is winner, 1 is draw, 0 is loser - this can be changed to a boolean
-        this.playingRound = playingRound;
+        this.playingRound = playingRound
     }
 }
 
-let player = new Person('TJ', 0, 0, [], '', 0, 0, 100.00, 0, true); //can be prompted for name but I removed as it was too annoying for testing
-let opponent1 = new Person('Darrell', 5, 5, [], '', 0, 0, 100.00, 0, true);
-let opponent2 = new Person('Gladys', 5, 5, [], '', 0, 0, 100.00, 0, true);
-let opponent3 = new Person('Dom', 5, 5, [], '', 0, 0, 100.00, 0, true);
-let opponent4 = new Person('Marky Mark', 5, 5, [], '', 0, 0, 100.00, 0, true);
+let player = new Person('TJ', 0, 0, [], '', 0, 0, 10, 100.00, 0, true); //can be prompted for name but I removed as it was too annoying for testing
+let opponent1 = new Person('Darrell', 5, 5, [], '', 0, 0, 0, 100.00, 0, true);
+let opponent2 = new Person('Gladys', 5, 5, [], '', 0, 0, 0, 100.00, 0, true);
+let opponent3 = new Person('Dom', 5, 5, [], '', 0, 0, 0, 100.00, 0, true);
+let opponent4 = new Person('Marky Mark', 5, 5, [], '', 0, 0, 0, 100.00, 0, true);
 
 let playerList = [player, opponent1, opponent2, opponent3, opponent4]
 
@@ -254,6 +255,28 @@ showButton.addEventListener('click', function(){
 //Functions 
 ////////////////////////
 
+function bet(i){
+    playerList[i].money -= 5;
+    pot += 5;
+    potDisplay.textContent = pot;
+    return pot;
+}
+
+function raise(i){
+    playerList[i].money -= 10;
+    pot += 10;
+    potDisplay.textContent = pot;
+    return pot;
+}
+
+function fold(i){
+    playerList[i].playingRound = false;
+}
+
+function see(i){
+    playerList[i].money
+}
+
 //Enables buttons with the class of action button (bet, raise, fold, see)
 function enableActionButtons(){
     actionButtons.forEach(btn =>{
@@ -450,4 +473,15 @@ function payout(){
     console.log(playerList[2].money)
     console.log(playerList[3].money)
     console.log(playerList[4].money)
+}
+
+//Function to see if AI opponents will either bet, raise, fold, see - this will be adjusted for turns later
+function firstRollAI(){
+    for(let i = 1; i < playerList.length; i++){
+        if(playerList[i].playingRound){
+            if(playerList[i].handScore == 3){
+
+            }
+        }
+    }
 }
