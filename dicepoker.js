@@ -3,26 +3,25 @@
 //////////////////
 
 class Person {
-    constructor(name, skill, risk, hand, handName, handScore, handValue, risk, money, winner, playingRound) {
+    constructor(name, skill, confidence, hand, handName, handScore, handValue, money, winner, playingRound) {
         this.name = name;
         this.skill = skill;
-        this.risk = risk;
+        this.confidence = confidence;
         this.hand = hand;
         this.handName = handName;
         this.handScore = handScore;
         this.handValue = handValue;
-        this.risk = risk;
         this.money = money;
         this.winner = winner; // 2 is winner, 1 is draw, 0 is loser - this can be changed to a boolean
         this.playingRound = playingRound
     }
 }
 
-let player = new Person('TJ', 0, 0, [], '', 0, 0, 10, 100.00, 0, true); //can be prompted for name but I removed as it was too annoying for testing
-let opponent1 = new Person('Darrell', 5, 5, [], '', 0, 0, 0, 100.00, 0, true);
-let opponent2 = new Person('Gladys', 5, 5, [], '', 0, 0, 0, 100.00, 0, true);
-let opponent3 = new Person('Dom', 5, 5, [], '', 0, 0, 0, 100.00, 0, true);
-let opponent4 = new Person('Marky Mark', 5, 5, [], '', 0, 0, 0, 100.00, 0, true);
+let player = new Person('TJ', 0, 0, [], '', 0, 0, 100.00, 0, true); //can be prompted for name but I removed as it was too annoying for testing
+let opponent1 = new Person('Darrell', 5, 5, [], '', 0, 0, 100.00, 0, true);
+let opponent2 = new Person('Gladys', 5, 5, [], '', 0, 0, 100.00, 0, true);
+let opponent3 = new Person('Dom', 5, 5, [], '', 0, 0, 100.00, 0, true);
+let opponent4 = new Person('Marky Mark', 5, 5, [], '', 0, 0, 100.00, 0, true);
 
 let playerList = [player, opponent1, opponent2, opponent3, opponent4]
 
@@ -71,6 +70,7 @@ let isStartofGame = true;
 let pot = 0;
 let communalRoll1 = [];
 let communalRoll2 = [];
+let currentBet = 0;
 
 
 
@@ -147,6 +147,10 @@ playerRollButton.addEventListener('click', function(){
         evaluatePlayerRoll(playerList[i].hand, i); 
     }
 
+    for(let i = 1; i < playerList.length; i++){
+        firstRollAI(i);
+    }
+
     console.log(`Hand value is: ${playerList[0].handValue}`)
     console.log(`Hand score is: ${playerList[0].handScore}`)
     console.log(`Hand score is: ${playerList[0].handName}`)
@@ -203,12 +207,6 @@ communalRollButton2.addEventListener('click', function(){
 
     playerHandNameDisplay.textContent = playerList[0].handName;
 
-    console.log(playerList[0].handScore)
-    console.log(playerList[1].handScore)
-    console.log(playerList[2].handScore)
-    console.log(playerList[3].handScore)
-    console.log(playerList[4].handScore)
-
 })
 
 
@@ -255,27 +253,45 @@ showButton.addEventListener('click', function(){
 //Functions 
 ////////////////////////
 
+
+//Bets $5 which will be the default for now. This function removed the money from the player, adds it to the pot, and then displays the pot. It also increased the current bet counter to 5 (which is relevant for limiting raising)
 function bet(i){
     playerList[i].money -= 5;
     pot += 5;
+
+    if(currentBet == 0 || currentBet == 5){
+        currentBet += 5;
+    }
+
     potDisplay.textContent = pot;
     return pot;
 }
 
+//Raises the current bet to 10 which is the limit for raising. It uses the same principles as the bet function, but will either increase an existing bet by 5 (making 10), or immediately raising to the limit of 10
 function raise(i){
-    playerList[i].money -= 10;
-    pot += 10;
+    if(currentBet == 0){
+        playerList[i].money -= 10;
+        pot += 10;
+        currentBet += 10;
+    } else if(currentBet == 5) {
+        playerList[i].money -= 5;
+        pot += 5;
+        currentBet += 5; 
+    }
+
     potDisplay.textContent = pot;
     return pot;
 }
 
+//Removes the player from playing the round/game
 function fold(i){
     playerList[i].playingRound = false;
 }
 
-function see(i){
-    playerList[i].money
-}
+// removing this for now as it might be possible to just use the bet function repeatedly 
+// function see(i){
+//     playerList[i].money
+// }
 
 //Enables buttons with the class of action button (bet, raise, fold, see)
 function enableActionButtons(){
@@ -340,13 +356,13 @@ function clearHands(){
 //Evaluates the first roll of three dice - this can be used for each player
 function evaluatePlayerRoll(handArray, i){
     if (handArray[0] === handArray[2]){
-        playerList[i].handScore = 4;
+        playerList[i].handScore = 3;
         playerList[i].handName = 'Three-of-a-Kind';
     } else if (handArray[0] === handArray[1] || handArray[1] === handArray[2]){
-        playerList[i].handScore = 2;
+        playerList[i].handScore = 1;
         playerList[i].handName = 'Pair';
     } else if (handArray === [1,2,3] || handArray === [2,3,4] || handArray === [3,4,5] || handArray === [4,5,6]){
-        playerList[i].handScore = 1;
+        playerList[i].handScore = 2;
         playerList[i].handName = 'Three dice straight'; // this can be split later on based on probability e.g. a straight in the middle is worth more as it has more chance, low straight is worth less
     }
 }
@@ -476,12 +492,23 @@ function payout(){
 }
 
 //Function to see if AI opponents will either bet, raise, fold, see - this will be adjusted for turns later
-function firstRollAI(){
-    for(let i = 1; i < playerList.length; i++){
+function firstRollAI(i){
+    for(let p = 1; p < playerList.length; p++){
         if(playerList[i].playingRound){
-            if(playerList[i].handScore == 3){
 
-            }
+            playerList[i].confidence = (playerList[i].handScore * 8) + playerList[i].handValue 
+            if(playerList[i].confidence >= 27){
+                raise(i);
+                console.log(`${playerList[i].name} has raised`)
+            } else if(playerList[i].confidence < 25 && playerList[i].confidence > 20){
+                bet(i);
+                console.log(`${playerList[i].name} has betted`)
+            } else{
+                fold(i)
+                console.log(`${playerList[i].name} has folded`)
+            } // no idea how to implement see yet
         }
     }
 }
+
+// need to increase the confidence if others have folded
