@@ -28,8 +28,6 @@ let playerList = [player, opponent1, opponent2, opponent3, opponent4]
 const gameDisplay = document.querySelector('#gameNumber');
 const gameButton = document.querySelector('#gameButton');
 const roundDisplay = document.querySelector('#round');
-const roundButton = document.querySelector('#roundButton');
-
 
 const potDisplay = document.querySelector('#pot');
 const playerMoneyDisplay = document.querySelector('#playerMoney');
@@ -89,7 +87,7 @@ gameButton.addEventListener('click', function(){
     gameDisplay.textContent = gameCounter++;
     roundDisplay.textContent = gameRound[roundCounter];
     disable(gameButton);
-    enable(roundButton);
+    clearHands();
     return gameCounter;
 })
 
@@ -117,22 +115,26 @@ gameButton.addEventListener('click', function(){
     return isStartofGame = false;
 })
 
+
+
 //Button to start a round - at the moment this increases and resets the round counter, as well as disabling and enabling action buttons. The idea is that this will be improved to control betting e.g. bets will need to be placed at the start of the round
-roundButton.addEventListener('click', function(){
-    if (roundCounter < 3){
-        roundCounter++;
-    } else{
-        roundCounter = 0;
-    }
-    roundDisplay.textContent = gameRound[roundCounter];
-    disable(roundButton);
-    enable(playerRollButton);
-    return gameRound;
-})
+// roundButton.addEventListener('click', function(){
+//     if (roundCounter < 3){
+//         roundCounter++;
+//     } else{
+//         roundCounter = 0;
+//     }
+//     roundDisplay.textContent = gameRound[roundCounter];
+//     disable(roundButton);
+//     enable(playerRollButton);
+//     return gameRound;
+// })
 
 
 //Button to roll the first three dice for each player and add it to their hand. It also calculates the hand value, hand score, and hand name of their 3-dice roll 
 playerRollButton.addEventListener('click', function(){
+    roundCount()
+    console.log(`Round count is: ${roundCounter}`)
     playersRoll();
     rollSort();
     playerRollDisplay.textContent = playerList[0].hand;
@@ -152,25 +154,29 @@ playerRollButton.addEventListener('click', function(){
     for(let i = 1; i < playerList.length; i++){
         firstRollAI(i);
     }
-
-    console.log(`Hand value is: ${playerList[0].handValue}`)
-    console.log(`Hand score is: ${playerList[0].handScore}`)
-    console.log(`Hand score is: ${playerList[0].handName}`)
-
     // return playerList[0].hand; - do I need this
 })
 
 //Button to roll the first community dice. It also pushes that dice to all hands.
 communalRollButton1.addEventListener('click', function(){
+    roundCount()
+    clearScores()
+
     diceRoll(communalRoll1)
     
     disable(communalRollButton1);
     enable(communalRollButton2);
 
+
+
     for(let i = 0; i < playerList.length; i++){
         playerList[i].hand.push(communalRoll1[0]);
     }
     rollSort();
+
+    for(let i = 0; i < playerList.length; i++){
+        calculateValueScore(playerList[i].hand, i); 
+    }
 
     communalRollDisplay.textContent = communalRoll1;
     playerHandNumberDisplay.textContent = playerList[0].hand;
@@ -184,10 +190,15 @@ communalRollButton1.addEventListener('click', function(){
 
 //Button to roll the second community dice. It also pushes that dice to all hands and evaluates those hands and value scores.
 communalRollButton2.addEventListener('click', function(){
+    roundCount()
+    clearScores()
+
     diceRoll(communalRoll2)
     
     disable(communalRollButton2);
     enable(showButton);
+
+
 
     for(let i = 0; i < playerList.length; i++){
         playerList[i].hand.push(communalRoll2[0]);
@@ -211,7 +222,7 @@ communalRollButton2.addEventListener('click', function(){
 
     //for testing
     for(let i = 0; i < playerList.length; i++){
-        console.log(`${playerList[i].name} has a ${playerList[i].handName} with rolls of ${playerList[i].hand} and a value score of ${playerList[i].handValue}`); 
+        console.log(`${playerList[i].name} has a ${playerList[i].handName} with rolls of ${playerList[i].hand} and a hand value of ${playerList[i].handValue}`); 
         
     }
 
@@ -254,7 +265,6 @@ betButton.addEventListener('click', function(){
 //The show button determines the final winner for the game
 showButton.addEventListener('click', function(){
     determineWinner()
-    clearHands();
     enable(gameButton);
 })
 
@@ -366,6 +376,15 @@ function clearHands(){
     } 
 }
 
+//function to clear scores betweeb each round
+function clearScores(){
+    for (let i = 0; i < playerList.length; i++){
+        playerList[i].handScore = 0;
+        playerList[i].handValue = 0;
+        playerList[i].handName = '';
+    } 
+}
+
 //Evaluates the four dice hand of each player with their roll and the first com roll - need to check the probabilities of various hands so this list is a guess
 function evaluateComRoll1(handArray, i){
     if (handArray[0] === handArray[[3]]){
@@ -443,7 +462,14 @@ function evaluateHand(handArray, i){
 //Sums the score for the player's first roll. This is not an ideal solution as it is only for the one roll but I couldn't figure out how to do it better
 function calculateValueScore(handArray, i) {
     for (let p = 0; p < handArray.length; p++){
-        playerList[i].handValue = (handArray[0] + handArray[1] + handArray[2])
+        
+        if (roundCounter === 1){
+            playerList[i].handValue = (handArray[0] + handArray[1] + handArray[2])
+        } else if(roundCounter === 2){
+            playerList[i].handValue = (handArray[0] + handArray[1] + handArray[2] + handArray[3])
+        } else if(roundCounter === 3){
+            playerList[i].handValue = (handArray[0] + handArray[1] + handArray[2] + handArray[3] + handArray[4])
+        }
     }
     //return playerList;
   }
@@ -471,7 +497,11 @@ function shuffle(array) {
 //Determines the winner based on the hand score and value (not yet) of each player. This needs to be updated to provide pot to winner, and to split pot between joint winners
 function determineWinner(){
     let highestScore = 0;
+    let scoreWinners = [];
+
+    let highestValue = 0;
     let winners = [];
+
 
     for (let i = 0; i < playerList.length; i++) {
         if (playerList[i].handScore > highestScore) {
@@ -481,8 +511,25 @@ function determineWinner(){
     
     for (let i = 0; i < playerList.length; i++) {
     if (playerList[i].handScore === highestScore && playerList[i].playingRound) {
-        winners.push(playerList[i]);
+        scoreWinners.push(playerList[i]);
         }   
+    }
+
+    console.log(scoreWinners);
+    console.log(highestScore);
+
+    if(scoreWinners.length > 1){
+        for (let i = 0; i < playerList.length; i++) {
+            if (playerList[i].handValue > highestValue) {
+              highestValue = playerList[i].handValue;
+            }
+        }
+        
+        for (let i = 0; i < playerList.length; i++) {
+        if (playerList[i].handValue === highestScore && playerList[i].playingRound) {
+            winners.push(playerList[i]);
+            }   
+        }
     }
 
     for (let i = 0; i < playerList.length; i++) {
@@ -536,7 +583,7 @@ function firstRollAI(i){
         if(playerList[i].playingRound){
             confidenceModifier()
             playerList[i].confidence = (playerList[i].handScore * 8) + playerList[i].handValue 
-            if(playerList[i].confidence >= 27){
+            if(playerList[i].confidence >= 25){
                 raise(i);
                 console.log(`${playerList[i].name} has raised`)
             } else if(playerList[i].confidence < 25 && playerList[i].confidence > 20){
@@ -563,7 +610,7 @@ function secondRollAI(i){
             if(playerList[i].confidence >= 40){
                 raise(i);
                 console.log(`${playerList[i].name} has raised`)
-            } else if(playerList[i].confidence < 39 && playerList[i].confidence > 30){
+            } else if(playerList[i].confidence < 39 && playerList[i].confidence > 20){
                 bet(i);
                 console.log(`${playerList[i].name} has betted`)
             } else{
@@ -587,7 +634,7 @@ function finalRollAI(i){
             if(playerList[i].confidence >= 40){
                 raise(i);
                 console.log(`${playerList[i].name} has raised`)
-            } else if(playerList[i].confidence < 39 && playerList[i].confidence > 30){
+            } else if(playerList[i].confidence < 39 && playerList[i].confidence > 20){
                 bet(i);
                 console.log(`${playerList[i].name} has betted`)
             } else{
@@ -611,4 +658,16 @@ function confidenceModifier(){
     } else if(playingRoundCounter == 1){
         confidenceMod = 100;
     }
+}
+
+
+//Function to increment rounds or set them to zero during play - this has replaced the round button so it can happen automatically
+function roundCount(){
+    if (roundCounter < 3){
+        roundCounter++;
+    } else{
+        roundCounter = 0;
+    }
+    roundDisplay.textContent = gameRound[roundCounter];
+    return roundCounter;
 }
