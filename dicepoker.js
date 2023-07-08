@@ -71,6 +71,8 @@ let pot = 0;
 let communalRoll1 = [];
 let communalRoll2 = [];
 let currentBet = 0;
+let playingRoundCounter = 5;
+let confidenceMod = 8;
 
 
 
@@ -532,7 +534,7 @@ function payout(){
 function firstRollAI(i){
     for(let p = 1; p < playerList.length; p++){
         if(playerList[i].playingRound){
-
+            confidenceModifier()
             playerList[i].confidence = (playerList[i].handScore * 8) + playerList[i].handValue 
             if(playerList[i].confidence >= 27){
                 raise(i);
@@ -544,6 +546,8 @@ function firstRollAI(i){
                 fold(i)
                 console.log(`${playerList[i].name} has folded`)
             } // no idea how to implement see yet
+        } else{
+            playingRoundCounter -= 1;
         }
     }
 }
@@ -554,8 +558,8 @@ function firstRollAI(i){
 function secondRollAI(i){
     for(let p = 1; p < playerList.length; p++){
         if(playerList[i].playingRound){
-
-            playerList[i].confidence = (playerList[i].handScore * 8) + playerList[i].handValue 
+            confidenceModifier()
+            playerList[i].confidence = (playerList[i].handScore * confidenceMod) + playerList[i].handValue 
             if(playerList[i].confidence >= 40){
                 raise(i);
                 console.log(`${playerList[i].name} has raised`)
@@ -566,15 +570,19 @@ function secondRollAI(i){
                 fold(i)
                 console.log(`${playerList[i].name} has folded`)
             } // no idea how to implement see yet
+        } else{
+            playingRoundCounter -= 1;
         }
     }
 }
+
+
 
 //Function to see if AI opponents will either bet, raise, fold, see - this will be adjusted for turns later - maybe can combine functions later
 function finalRollAI(i){
     for(let p = 1; p < playerList.length; p++){
         if(playerList[i].playingRound){
-
+            confidenceModifier()
             playerList[i].confidence = (playerList[i].handScore * 8) + playerList[i].handValue 
             if(playerList[i].confidence >= 40){
                 raise(i);
@@ -586,6 +594,21 @@ function finalRollAI(i){
                 fold(i)
                 console.log(`${playerList[i].name} has folded`)
             } // no idea how to implement see yet
+        } else{
+            playingRoundCounter -= 1;
         }
+    }
+}
+
+//Function to increase the confidence of a player as per the remaining number of players - I will adjust the numbers later
+function confidenceModifier(){
+    if (playingRoundCounter == 4){
+        confidenceMod = 9;
+    } else if(playingRoundCounter == 3){
+        confidenceMod = 10;
+    } else if(playingRoundCounter == 2){
+        confidenceMod = 12;
+    } else if(playingRoundCounter == 1){
+        confidenceMod = 100;
     }
 }
