@@ -125,7 +125,6 @@ roundButton.addEventListener('click', function(){
     roundDisplay.textContent = gameRound[roundCounter];
     disable(roundButton);
     enable(playerRollButton);
-    enableActionButtons();
     return gameRound;
 })
 
@@ -137,7 +136,8 @@ playerRollButton.addEventListener('click', function(){
     playerRollDisplay.textContent = playerList[0].hand;
     playerHandNumberDisplay.textContent = playerList[0].hand;
     disable(playerRollButton);
-    enable(communalRollButton1);
+    enableActionButtons();
+    
 
     for(let i = 0; i < playerList.length; i++){
         calculateValueScore(playerList[i].hand, i); 
@@ -173,6 +173,10 @@ communalRollButton1.addEventListener('click', function(){
     communalRollDisplay.textContent = communalRoll1;
     playerHandNumberDisplay.textContent = playerList[0].hand;
 
+    for(let i = 1; i < playerList.length; i++){
+        secondRollAI(i);
+    }
+
     //return hands; 
 })
 
@@ -199,9 +203,13 @@ communalRollButton2.addEventListener('click', function(){
         calculateValueScore(playerList[i].hand, i); 
     }
 
+    for(let i = 1; i < playerList.length; i++){
+        finalRollAI(i);
+    }
+
     //for testing
     for(let i = 0; i < playerList.length; i++){
-        console.log(playerList[i].hand); 
+        console.log(`${playerList[i].name} has a ${playerList[i].handName} with rolls of ${playerList[i].hand} and a value score of ${playerList[i].handValue}`); 
         
     }
 
@@ -214,6 +222,9 @@ communalRollButton2.addEventListener('click', function(){
 betButton.addEventListener('click', function(){
     //pot += 5;
     //bets the same for each player - will be changed
+
+    enable(communalRollButton1);
+
     for (let i = 0; i < playerList.length; i++){
         pot += 5;
     }
@@ -353,21 +364,47 @@ function clearHands(){
     } 
 }
 
-//Evaluates the first roll of three dice - this can be used for each player
-function evaluatePlayerRoll(handArray, i){
-    if (handArray[0] === handArray[2]){
-        playerList[i].handScore = 3;
+//Evaluates the four dice hand of each player with their roll and the first com roll - need to check the probabilities of various hands so this list is a guess
+function evaluateComRoll1(handArray, i){
+    if (handArray[0] === handArray[[3]]){
+        playerList[i].handScore = 6;
+        playerList[i].handName = 'Four-of-a-Kind';
+    } else if (handArray[0] === handArray[2] || handArray[1] === handArray[3]){
+        playerList[i].handScore = 5;
         playerList[i].handName = 'Three-of-a-Kind';
-    } else if (handArray[0] === handArray[1] || handArray[1] === handArray[2]){
-        playerList[i].handScore = 1;
-        playerList[i].handName = 'Pair';
-    } else if (handArray === [1,2,3] || handArray === [2,3,4] || handArray === [3,4,5] || handArray === [4,5,6]){
+    } else if (handArray[0] === handArray[1] && handArray[2] === handArray[3]){
+        playerList[i].handScore = 4;
+        playerList[i].handName = 'Two Pair';
+    } else if (handArray === [[1,2,3,4]] || handArray === [2,3,4,5] || handArray === [3,4,5,6]){
+        playerList[i].handScore = 3;
+        playerList[i].handName = 'Four-Dice-Straight'; // same with first roll - this can be improved
+    } else if (handArray[0] === handArray[1] || handArray[1] === handArray[2] || handArray[2] === handArray[3]){
         playerList[i].handScore = 2;
-        playerList[i].handName = 'Three dice straight'; // this can be split later on based on probability e.g. a straight in the middle is worth more as it has more chance, low straight is worth less
+        playerList[i].handName = 'Pair';
+    } else{
+        playerList[i].handScore = 1;
+        playerList[i].handName = 'High Dice';
     }
 }
 
-//Function to evaluate a full hand array of fice dice
+//Evaluates the first roll of three dice - this can be used for each player
+function evaluatePlayerRoll(handArray, i){
+    if (handArray[0] === handArray[2]){
+        playerList[i].handScore = 4;
+        playerList[i].handName = 'Three-of-a-Kind';
+    } else if (handArray[0] === handArray[1] || handArray[1] === handArray[2]){
+        playerList[i].handScore = 2;
+        playerList[i].handName = 'Pair';
+    } else if (handArray === [1,2,3] || handArray === [2,3,4] || handArray === [3,4,5] || handArray === [4,5,6]){
+        playerList[i].handScore = 1;
+        playerList[i].handName = 'Three dice straight'; // this can be split later on based on probability e.g. a straight in the middle is worth more as it has more chance, low straight is worth less
+    } else{
+        playerList[i].handScore = 1;
+        playerList[i].handName = 'High Dice';
+    }
+}
+
+//Function to evaluate a full hand array of fice dice - i can reduce compolexity on the straights to match the firstplayerroll 
 function evaluateHand(handArray, i){ 
     if (handArray[0] === handArray[4]){
         playerList[i].handScore = 9;
@@ -429,7 +466,7 @@ function shuffle(array) {
     return array;
   }
 
-//Determines the winner based on the hand score and value of each player. This needs to be updated to provide pot to winner, and to split pot between joint winners
+//Determines the winner based on the hand score and value (not yet) of each player. This needs to be updated to provide pot to winner, and to split pot between joint winners
 function determineWinner(){
     let highestScore = 0;
     let winners = [];
@@ -441,7 +478,7 @@ function determineWinner(){
     }
     
     for (let i = 0; i < playerList.length; i++) {
-    if (playerList[i].handScore === highestScore) {
+    if (playerList[i].handScore === highestScore && playerList[i].playingRound) {
         winners.push(playerList[i]);
         }   
     }
@@ -511,4 +548,44 @@ function firstRollAI(i){
     }
 }
 
-// need to increase the confidence if others have folded
+// need to increase the confidence if others have folded - will create an isPlaying counter
+
+//Function to see if AI opponents will either bet, raise, fold, see - this will be adjusted for turns later - maybe can combine functions later
+function secondRollAI(i){
+    for(let p = 1; p < playerList.length; p++){
+        if(playerList[i].playingRound){
+
+            playerList[i].confidence = (playerList[i].handScore * 8) + playerList[i].handValue 
+            if(playerList[i].confidence >= 40){
+                raise(i);
+                console.log(`${playerList[i].name} has raised`)
+            } else if(playerList[i].confidence < 39 && playerList[i].confidence > 30){
+                bet(i);
+                console.log(`${playerList[i].name} has betted`)
+            } else{
+                fold(i)
+                console.log(`${playerList[i].name} has folded`)
+            } // no idea how to implement see yet
+        }
+    }
+}
+
+//Function to see if AI opponents will either bet, raise, fold, see - this will be adjusted for turns later - maybe can combine functions later
+function finalRollAI(i){
+    for(let p = 1; p < playerList.length; p++){
+        if(playerList[i].playingRound){
+
+            playerList[i].confidence = (playerList[i].handScore * 8) + playerList[i].handValue 
+            if(playerList[i].confidence >= 40){
+                raise(i);
+                console.log(`${playerList[i].name} has raised`)
+            } else if(playerList[i].confidence < 39 && playerList[i].confidence > 30){
+                bet(i);
+                console.log(`${playerList[i].name} has betted`)
+            } else{
+                fold(i)
+                console.log(`${playerList[i].name} has folded`)
+            } // no idea how to implement see yet
+        }
+    }
+}
