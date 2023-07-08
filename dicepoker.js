@@ -581,7 +581,7 @@ function payout(){
 function firstRollAI(i){
     if(playerList[i].playingRound){
         confidenceModifier();
-        playerList[i].confidence = (playerList[i].handScore * 8) + playerList[i].handValue; 
+        playerList[i].confidence = (playerList[i].handScore * confidenceMod) + playerList[i].handValue; 
         console.log(`${playerList[i].name} confidence is ${playerList[i].confidence}`);
         if(playerList[i].confidence >= 25){
             raise(i);
