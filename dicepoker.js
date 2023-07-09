@@ -178,6 +178,10 @@ communalRollButton1.addEventListener('click', function(){
         calculateValueScore(playerList[i].hand, i); 
     }
 
+    for(let i = 0; i < playerList.length; i++){
+        evaluateComRoll1(playerList[i].hand, i); 
+    }
+
     communalRollDisplay.textContent = communalRoll1;
     playerHandNumberDisplay.textContent = playerList[0].hand;
 
@@ -586,7 +590,7 @@ function firstRollAI(i){
         if(playerList[i].confidence >= 25){
             raise(i);
             console.log(`${playerList[i].name} has raised`)
-        } else if(playerList[i].confidence < 25 && playerList[i].confidence > 20){
+        } else if(playerList[i].confidence < 25 && playerList[i].confidence > 15){
             bet(i);
             console.log(`${playerList[i].name} has betted`)
         } else{
@@ -609,7 +613,7 @@ function secondRollAI(i){
         if(playerList[i].confidence >= 40){
             raise(i);
             console.log(`${playerList[i].name} has raised`)
-        } else if(playerList[i].confidence < 39 && playerList[i].confidence > 20){
+        } else if(playerList[i].confidence < 39 && playerList[i].confidence > 15){
             bet(i);
             console.log(`${playerList[i].name} has betted`)
         } else{
@@ -633,7 +637,7 @@ function finalRollAI(i){
         if(playerList[i].confidence >= 40){
             raise(i);
             console.log(`${playerList[i].name} has raised`)
-        } else if(playerList[i].confidence < 39 && playerList[i].confidence > 20){
+        } else if(playerList[i].confidence < 39 && playerList[i].confidence > 15){
             bet(i);
             console.log(`${playerList[i].name} has betted`)
         } else{
@@ -656,6 +660,7 @@ function confidenceModifier(){
     } else if(playingRoundCounter == 1){
         confidenceMod = 100;
     }
+    return confidenceMod;
 }
 
 
