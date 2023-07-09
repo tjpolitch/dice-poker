@@ -12,16 +12,16 @@ class Person {
         this.handScore = handScore;
         this.handValue = handValue;
         this.money = money;
-        this.winner = winner; // 2 is winner, 1 is draw, 0 is loser - this can be changed to a boolean
+        this.winner = winner; 
         this.playingRound = playingRound
     }
 }
 
-let player = new Person('TJ', 0, 0, [], '', 0, 0, 100.00, 0, true); //can be prompted for name but I removed as it was too annoying for testing
-let opponent1 = new Person('Babbles', 5, 5, [], '', 0, 0, 100.00, 0, true);
-let opponent2 = new Person('Levi', 5, 5, [], '', 0, 0, 100.00, 0, true);
-let opponent3 = new Person('Macy', 5, 5, [], '', 0, 0, 100.00, 0, true);
-let opponent4 = new Person('Milo', 5, 5, [], '', 0, 0, 100.00, 0, true);
+let player = new Person('TJ', 0, 0, [], '', 0, 0, 100.00, false, true); //can be prompted for name but I removed as it was too annoying for testing
+let opponent1 = new Person('Babbles', 5, 5, [], '', 0, 0, 100.00, false, true);
+let opponent2 = new Person('Levi', 5, 5, [], '', 0, 0, 100.00, false, true);
+let opponent3 = new Person('Macy', 5, 5, [], '', 0, 0, 100.00, false, true);
+let opponent4 = new Person('Milo', 5, 5, [], '', 0, 0, 100.00, false, true);
 
 let playerList = [player, opponent1, opponent2, opponent3, opponent4]
 
@@ -504,51 +504,101 @@ function determineWinner(){
     let scoreWinners = [];
 
     let highestValue = 0;
+    let valueWinners = []; //note - in the middle of implementing this
+
     let winners = [];
 
-
+    //iterates through the player list to find the highest hand score
     for (let i = 0; i < playerList.length; i++) {
         if (playerList[i].handScore > highestScore) {
           highestScore = playerList[i].handScore;
         }
     }
     
+    //iterates through the player list to push any current player with the highest hand score to the scoreWinners list (can be more than one)
     for (let i = 0; i < playerList.length; i++) {
-    if (playerList[i].handScore === highestScore && playerList[i].playingRound) {
-        scoreWinners.push(playerList[i]);
-        }   
+        if (playerList[i].handScore === highestScore && playerList[i].playingRound) {
+            scoreWinners.push(playerList[i]);
+            }   
     }
 
-    console.log(scoreWinners);
-    console.log(highestScore);
+    //iterates through the player list to find the highest handvalue for players that are currently playing
+    for (let i = 0; i < playerList.length; i++) {
+        if (playerList[i].handValue > highestValue && playerList[i].playingRound) {
+            highestValue = playerList[i].handValue;
+        }
+    }
 
-    if(scoreWinners.length > 1){
-        for (let i = 0; i < playerList.length; i++) {
-            if (playerList[i].handValue > highestValue) {
-              highestValue = playerList[i].handValue;
+    for (let i = 0; i < playerList.length; i++){
+
+    }
+
+    if(scoreWinners.length == 1){
+        for(let i = 0; i < playerList.length; i++){
+            if (playerList[i].handScore == highestScore){
+                winners.push(playerList[i]);
+                playerList[i].winner = true;
+                console.log(`${playerList[i].name} is the winner`);
             }
         }
-        
-        for (let i = 0; i < playerList.length; i++) {
-        if (playerList[i].handValue === highestScore && playerList[i].playingRound) {
-            winners.push(playerList[i]);
-            }   
+    } else if(scoreWinners.length > 1){
+        for(let i = 0; i < playerList.length; i++){
+
+        }
+
+    }
+
+    if(scoreWinners.length > 1){
+        for(let i = 0; i < playerList.length; i++){
+            if(playerList[i].handValue == highestValue && playerList[i].playingRound){
+                winners.push(playerList[i]);
+                playerList[i].winner = true;
+                console.log(`${playerList[i].name} is the winner`);
+            }
+        }
+    } else if(scoreWinners.length == 1){
+        for(let i = 0; i < playerList.length; i++){
+            if(playerList[i].handValue == highestValue && playerList[i].playingRound){
+                winners.push(playerList[i]);
+                playerList[i].winner = true;
+                console.log(`${playerList[i].name} is the winner`);
+            }
         }
     }
 
-    for (let i = 0; i < playerList.length; i++) {
-        if (winners.includes(playerList[i])) {
-            playerList[i].winner = 2;
-            console.log(`${playerList[i].name} is the winner`)
-        } else if (winners.length > 1) {
-            playerList[i].winner = 1;
-        } else {
-            playerList[i].winner = 0
-        }  
-    }
+    // if(scoreWinners.length > 1){
+    //     //iterates through the player list to find the highest handvalue for players that are currently playing
+    //     for (let i = 0; i < playerList.length; i++) {
+    //         if (playerList[i].handValue > highestValue || playerList[i].playingRound) {
+    //           highestValue = playerList[i].handValue;
+    //         }
+    //     }
+        
+    //     //iterates through the player list to fin
+    //     for (let i = 0; i < playerList.length; i++) {
+    //         if (playerList[i].handValue === highestValue && playerList[i].playingRound) {
+    //             winners.push(playerList[i]);
+    //             playerList[i].winner = true;
+    //             console.log(`${playerList[i].name} is the winner`);
+    //         } else if(scoreWinners.length == 1){
+    //             for (let i = 0; i < playerList.length; i++){
+    //                 if (playerList[i].handValue == highestValue && playerList[i].playingRound){
+    //                     winners.push(playerList[i]);
+    //                     playerList[i].winner = true;
+    //                     console.log(`${playerList[i].name} is the winner`);
+    //             }  
+    //     }
+    // }
 
+    console.log(winners);
+
+    // for (let i = 0; i < playerList.length; i++) {
+    //     if (winners.includes(playerList[i])) {
+    //         playerList[i].winner = true;
+    //         console.log(`${playerList[i].name} is the winner`)
+    //     } 
+    // }
     payout();
-
     return playerList;
 }
 
