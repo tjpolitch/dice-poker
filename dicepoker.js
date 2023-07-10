@@ -501,12 +501,7 @@ function shuffle(array) {
 //Determines the winner based on the hand score and value (not yet) of each player. This needs to be updated to provide pot to winner, and to split pot between joint winners
 function determineWinner(){
     let highestScore = 0;
-    let scoreWinners = [];
-
     let highestValue = 0;
-    let valueWinners = []; //note - in the middle of implementing this
-
-    let winners = [];
 
     //iterates through the player list to find the highest hand score
     for (let i = 0; i < playerList.length; i++) {
@@ -515,11 +510,11 @@ function determineWinner(){
         }
     }
     
-    //iterates through the player list to push any current player with the highest hand score to the scoreWinners list (can be more than one)
+    //iterates through the player list to push any current player with the highest hand score to the scoreWinners list (can be more than one), and takes everyone else out of the round
     for (let i = 0; i < playerList.length; i++) {
-        if (playerList[i].handScore === highestScore && playerList[i].playingRound) {
-            scoreWinners.push(playerList[i]);
-            }   
+        if (playerList[i].handScore < highestScore && playerList[i].playingRound) {
+            playerList[i].playingRound = false;
+            } 
     }
 
     //iterates through the player list to find the highest handvalue for players that are currently playing
@@ -529,75 +524,22 @@ function determineWinner(){
         }
     }
 
+
     for (let i = 0; i < playerList.length; i++){
-
+        if (playerList[i].handValue == highestValue && playerList[i].playingRound) {
+            playerList[i].winner = true;
+            } else{
+                playerList[i].playingRound = false;
+            }
     }
 
-    if(scoreWinners.length == 1){
-        for(let i = 0; i < playerList.length; i++){
-            if (playerList[i].handScore == highestScore){
-                winners.push(playerList[i]);
-                playerList[i].winner = true;
-                console.log(`${playerList[i].name} is the winner`);
-            }
-        }
-    } else if(scoreWinners.length > 1){
-        for(let i = 0; i < playerList.length; i++){
-
-        }
-
-    }
-
-    if(scoreWinners.length > 1){
-        for(let i = 0; i < playerList.length; i++){
-            if(playerList[i].handValue == highestValue && playerList[i].playingRound){
-                winners.push(playerList[i]);
-                playerList[i].winner = true;
-                console.log(`${playerList[i].name} is the winner`);
-            }
-        }
-    } else if(scoreWinners.length == 1){
-        for(let i = 0; i < playerList.length; i++){
-            if(playerList[i].handValue == highestValue && playerList[i].playingRound){
-                winners.push(playerList[i]);
-                playerList[i].winner = true;
-                console.log(`${playerList[i].name} is the winner`);
-            }
+    // print the winners - this can be shortened
+    for (let i = 0; i < playerList.length; i++){
+        if (playerList[i].winner){
+            console.log(`${playerList[i].name} is the winner`);
         }
     }
 
-    // if(scoreWinners.length > 1){
-    //     //iterates through the player list to find the highest handvalue for players that are currently playing
-    //     for (let i = 0; i < playerList.length; i++) {
-    //         if (playerList[i].handValue > highestValue || playerList[i].playingRound) {
-    //           highestValue = playerList[i].handValue;
-    //         }
-    //     }
-        
-    //     //iterates through the player list to fin
-    //     for (let i = 0; i < playerList.length; i++) {
-    //         if (playerList[i].handValue === highestValue && playerList[i].playingRound) {
-    //             winners.push(playerList[i]);
-    //             playerList[i].winner = true;
-    //             console.log(`${playerList[i].name} is the winner`);
-    //         } else if(scoreWinners.length == 1){
-    //             for (let i = 0; i < playerList.length; i++){
-    //                 if (playerList[i].handValue == highestValue && playerList[i].playingRound){
-    //                     winners.push(playerList[i]);
-    //                     playerList[i].winner = true;
-    //                     console.log(`${playerList[i].name} is the winner`);
-    //             }  
-    //     }
-    // }
-
-    console.log(winners);
-
-    // for (let i = 0; i < playerList.length; i++) {
-    //     if (winners.includes(playerList[i])) {
-    //         playerList[i].winner = true;
-    //         console.log(`${playerList[i].name} is the winner`)
-    //     } 
-    // }
     payout();
     return playerList;
 }
