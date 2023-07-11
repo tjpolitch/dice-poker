@@ -87,6 +87,7 @@ gameButton.addEventListener('click', function(){
     gameDisplay.textContent = gameCounter++;
     roundDisplay.textContent = gameRound[roundCounter];
     disable(gameButton);
+    enable(playerRollButton);
     clearHands();
     return gameCounter;
 })
@@ -104,6 +105,7 @@ gameButton.addEventListener('click', function(){
         }
     } else{
         playerList.unshift(playerList.pop()) //need to test this
+        roundCount();
     }
     
 
@@ -114,21 +116,6 @@ gameButton.addEventListener('click', function(){
 
     return isStartofGame = false;
 })
-
-
-
-//Button to start a round - at the moment this increases and resets the round counter, as well as disabling and enabling action buttons. The idea is that this will be improved to control betting e.g. bets will need to be placed at the start of the round
-// roundButton.addEventListener('click', function(){
-//     if (roundCounter < 3){
-//         roundCounter++;
-//     } else{
-//         roundCounter = 0;
-//     }
-//     roundDisplay.textContent = gameRound[roundCounter];
-//     disable(roundButton);
-//     enable(playerRollButton);
-//     return gameRound;
-// })
 
 
 //Button to roll the first three dice for each player and add it to their hand. It also calculates the hand value, hand score, and hand name of their 3-dice roll 
@@ -240,6 +227,7 @@ betButton.addEventListener('click', function(){
     //pot += 5;
     //bets the same for each player - will be changed
 
+    disable(playerRollButton);
     enable(communalRollButton1);
 
     for (let i = 0; i < playerList.length; i++){
