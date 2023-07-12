@@ -95,6 +95,7 @@ gameButton.addEventListener("click", function () {
   disable(gameButton);
   enable(playerRollButton);
   clearHands();
+  logEvent("A new game has started!")
   return gameCounter;
 });
 
@@ -132,6 +133,7 @@ playerRollButton.addEventListener("click", function () {
   playerHandNumberDisplay.textContent = playerList[0].hand;
   disable(playerRollButton);
   enableActionButtons();
+  logEvent("Players have rolled their dice.")
 
   for (let i = 0; i < playerList.length; i++) {
     calculateValueScore(playerList[i].hand, i);
@@ -156,6 +158,7 @@ communalRollButton1.addEventListener("click", function () {
 
   disable(communalRollButton1);
   enableActionButtons();
+  logEvent("The first communal dice is rolled.")
 
   for (let i = 0; i < playerList.length; i++) {
     playerList[i].hand.push(communalRoll1[0]);
@@ -190,6 +193,8 @@ communalRollButton2.addEventListener("click", function () {
   //rollButtonPerRound();
   disable(communalRollButton2);
   enableActionButtons();
+
+  logEvent("The second communal dice is rolled.")
 
   for (let i = 0; i < playerList.length; i++) {
     playerList[i].hand.push(communalRoll2[0]);
@@ -254,6 +259,7 @@ betButton.addEventListener("click", function () {
 
 //The show button determines the final winner for the game
 showButton.addEventListener("click", function () {
+  logEvent("Remaining players have shown their dice")
   determineWinner();
   enable(gameButton);
   disable(showButton);
@@ -563,7 +569,9 @@ function determineWinner() {
   // print the winners - this can be shortened
   for (let i = 0; i < playerList.length; i++) {
     if (playerList[i].winner) {
-      console.log(`${playerList[i].name} is the winner`);
+      let winner = `${playerList[i].name} is the winner`;
+      console.log(winner);
+      logEvent(winner);
     }
   }
 
@@ -724,8 +732,19 @@ function rollButtonPerRound() {
 
 //Function to log bet values of a player
 function logBet(player) {
+  const gameLog = document.getElementById("gameLog");
   const logElem = document.createElement("div");
-  logElem.textContent = player.name + "has betted $5";
+  
+  logElem.textContent = player.name + " has betted $5";
+  gameLog.insertBefore(logElem, gameLog.firstChild)
+  //document.getElementById("gameLog").appendChild(logElem);
+}
 
-  document.getElementById("gameLog").appendChild(logElem);
+//General function for adding a game event to the game log e.g. a new game has started
+function logEvent(event) {
+  const gameLog = document.getElementById("gameLog");
+  const logElem = document.createElement("div");
+  
+  logElem.textContent = event;
+  gameLog.insertBefore(logElem, gameLog.firstChild);
 }
