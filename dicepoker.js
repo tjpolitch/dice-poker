@@ -66,7 +66,7 @@ const allButtons = document.querySelectorAll("button");
 allButtons.forEach((btn) => {
   btn.disabled = true;
   gameButton.disabled = false;
-  playerRollButton.disabled = false;
+  playerRollButton.disabled = true;
 });
 
 let hand = "";
@@ -155,7 +155,7 @@ communalRollButton1.addEventListener("click", function () {
   diceRoll(communalRoll1);
 
   disable(communalRollButton1);
-  enable(communalRollButton2);
+  enableActionButtons();
 
   for (let i = 0; i < playerList.length; i++) {
     playerList[i].hand.push(communalRoll1[0]);
@@ -187,8 +187,9 @@ communalRollButton2.addEventListener("click", function () {
 
   diceRoll(communalRoll2);
 
+  //rollButtonPerRound();
   disable(communalRollButton2);
-  enable(showButton);
+  enableActionButtons();
 
   for (let i = 0; i < playerList.length; i++) {
     playerList[i].hand.push(communalRoll2[0]);
@@ -222,11 +223,8 @@ communalRollButton2.addEventListener("click", function () {
 
 //Button to bet. It is set to always bet $5, which can be adjusted in the future.
 betButton.addEventListener("click", function () {
-  //pot += 5;
-  //bets the same for each player - will be changed
-
-  disable(playerRollButton);
-  enable(communalRollButton1);
+  rollButtonPerRound();
+  disableActionButtons();
 
   for (let i = 0; i < playerList.length; i++) {
     pot += 5;
@@ -255,6 +253,7 @@ betButton.addEventListener("click", function () {
 showButton.addEventListener("click", function () {
   determineWinner();
   enable(gameButton);
+  disable(showButton);
 });
 
 ////////////////////////
@@ -588,7 +587,10 @@ function payout() {
     }
   }
 
+  playerMoneyDisplay.textContent = playerList[0].money;
+
   pot = 0;
+  potDisplay.textContent = pot;
 
   //console log for testing purposes
   console.log(playerList[0].money);
@@ -696,3 +698,23 @@ function roundCount() {
   roundDisplay.textContent = gameRound[roundCounter];
   return roundCounter;
 }
+
+//Function to enable/disable roll buttons based on the current round
+function rollButtonPerRound() {
+  if (roundCounter == 1) {
+    disable(playerRollButton);
+    enable(communalRollButton1);
+  } else if (roundCounter == 2) {
+    disable(communalRollButton1);
+    enable(communalRollButton2);
+  } else if (roundCounter == 3) {
+    disable(communalRollButton2);
+    enable(showButton);
+  }
+}
+
+//Function to count the actions that a player has taken within a round - will begin with bets - expected to reset after each round
+// function actionCounter(i){
+//     playerList[i].bets ++;
+//     if
+// }
