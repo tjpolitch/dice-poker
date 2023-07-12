@@ -230,6 +230,9 @@ betButton.addEventListener("click", function () {
     pot += 5;
   }
   potDisplay.textContent = pot;
+
+  logBet(playerList[0]);
+
   return pot;
 });
 
@@ -718,3 +721,11 @@ function rollButtonPerRound() {
 //     playerList[i].bets ++;
 //     if
 // }
+
+//Function to log bet values of a player
+function logBet(player) {
+  const logElem = document.createElement("div");
+  logElem.textContent = player.name + "has betted $5";
+
+  document.getElementById("gameLog").appendChild(logElem);
+}

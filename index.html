@@ -1,69 +1,165 @@
 <!DOCTYPE html>
-
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Dice Poker</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    </head>    
+<html lang="en">
+  <head>
+    <title>Dice Poker</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
     <div class="container">
-        <body>
-            <h1>Dice Poker</h1>
-            <hr>
-            <div class="container">
-                <div class="row">
-                    <div class="col-4">
-                        <h2>Game Number: <span id="gameNumber"></span></h2>
-                        <button id="gameButton">New Game</button>
-                        <h2>Round: <span id="round"></span></h2>
-                        <hr>
-                    </div>
-                    <div class="col-4">
-                        <h2>Pot: $<span id="pot">0</span></h2>
-                        <h2>Player Money: $<span id="playerMoney">0</span></h2>
-                        <hr>
-                    </div>
-                    <div class="col-4">
-                        <h2>Players</h2>
-                        <ol id="playerList"></ol>
-                    </div>
-                </div>
-            </div>
+      <h1>Dice Poker</h1>
 
-            <hr>
-            <span>
+      <hr />
+
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <h2>Game Number: <span id="gameNumber"></span></h2>
+            <button id="gameButton">New Game</button>
+            <h2>Round: <span id="round"></span></h2>
+          </div>
+          <div class="col">
+            <h2>Pot: $<span id="pot">0</span></h2>
+            <h2>Player Money: $<span id="playerMoney">0</span></h2>
+          </div>
+          <div class="col">
+            <h2>Players</h2>
+            <ol id="playerList"></ol>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <div class="row">
+              <span>
                 <h2>Communal Roll: <span id="communalRoll">None</span></h2>
-                <button id="rollButtonC1">Roll communal dice 1</button>    
-                <button id="rollButtonC2">Roll communal dice 2</button>    
-            </span>
-
-            <hr>
-
-            <span>
+                <button id="rollButtonC1">Roll communal dice 1</button>
+                <button id="rollButtonC2">Roll communal dice 2</button>
+              </span>
+              <hr />
+            </div>
+            <div class="row">
+              <span>
                 <h2>Player Roll: <span id="playerRoll">None</span></h2>
                 <button id="rollButtonP">Roll player dice</button>
-            </span>
+              </span>
 
-            <hr>
-
-            <span>
-                <h2>Player Hand: <span id="playerHand">None</span> | <span id="hand"></span></h2>
+              <hr />
+            </div>
+            <div class="row">
+              <span>
+                <h2>
+                  Player Hand: <span id="playerHand">None</span> |
+                  <span id="hand"></span>
+                </h2>
                 <button id="betButton" class="actionButtons">Bet $5</button>
                 <button id="raiseButton" class="actionButtons">Raise $5</button>
                 <button id="foldButton" class="actionButtons">Fold</button>
                 <button id="seeButton" class="actionButtons">See</button>
                 <button id="showButton">Show</button>
-            </span>
+              </span>
 
-            <hr>   
-            
-            <script src="dicepoker.js"></script>
-    </head>
-
-        </body>
+              <hr />
+            </div>
+          </div>
+          <div class="col">
+            <div
+              class="container overflow-auto shadow-none p-3 mb-5 bg-light rounded"
+              id="gameLog"
+            >
+              <p>test</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <script src="dicepoker.js"></script>
+  </body>
 </html>
+
+<!-- <!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Dice Poker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Dice Poker</h1>
+
+      <hr />
+
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <h2>Game Number: <span id="gameNumber"></span></h2>
+            <button id="gameButton">New Game</button>
+            <h2>Round: <span id="round"></span></h2>
+            <hr />
+          </div>
+          <div class="col">
+            <h2>Pot: $<span id="pot">0</span></h2>
+            <h2>Player Money: $<span id="playerMoney">0</span></h2>
+            <hr />
+          </div>
+          <div class="col">
+            <h2>Players</h2>
+            <ol id="playerList"></ol>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <span>
+        <h2>Communal Roll: <span id="communalRoll">None</span></h2>
+        <button id="rollButtonC1">Roll communal dice 1</button>
+        <button id="rollButtonC2">Roll communal dice 2</button>
+      </span>
+
+      <hr />
+
+      <span>
+        <h2>Player Roll: <span id="playerRoll">None</span></h2>
+        <button id="rollButtonP">Roll player dice</button>
+      </span>
+
+      <hr />
+
+      <span>
+        <h2>
+          Player Hand: <span id="playerHand">None</span> |
+          <span id="hand"></span>
+        </h2>
+        <button id="betButton" class="actionButtons">Bet $5</button>
+        <button id="raiseButton" class="actionButtons">Raise $5</button>
+        <button id="foldButton" class="actionButtons">Fold</button>
+        <button id="seeButton" class="actionButtons">See</button>
+        <button id="showButton">Show</button>
+      </span>
+
+      <hr />
+    </div>
+
+    <script src="dicepoker.js"></script>
+  </body>
+</html> -->
