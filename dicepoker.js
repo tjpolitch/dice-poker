@@ -125,7 +125,6 @@ gameButton.addEventListener("click", function () {
 //Button to roll the first three dice for each player and add it to their hand. It also calculates the hand value, hand score, and hand name of their 3-dice roll
 playerRollButton.addEventListener("click", function () {
   roundCount();
-  console.log(`Round count is: ${roundCounter}`);
   playersRoll();
   rollSort();
   playerRollDisplay.textContent = playerList[0].hand;
@@ -215,13 +214,6 @@ communalRollButton2.addEventListener("click", function () {
     finalRollAI(i);
   }
 
-  //for testing
-  for (let i = 0; i < playerList.length; i++) {
-    console.log(
-      `${playerList[i].name} has a ${playerList[i].handName} with rolls of ${playerList[i].hand} and a hand value of ${playerList[i].handValue}`
-    );
-  }
-
   playerHandNameDisplay.textContent = playerList[0].handName;
 });
 
@@ -259,6 +251,11 @@ betButton.addEventListener("click", function () {
 //The show button determines the final winner for the game
 showButton.addEventListener("click", function () {
   logEvent("Remaining players have shown their dice");
+  // Displays the hand of each player on thte game log
+  for (let i = 0; i < playerList.length; i++) {
+    const playerResult = `${playerList[i].name} has a ${playerList[i].handName} with rolls of ${playerList[i].hand} and a hand value of ${playerList[i].handValue}`;
+    logEvent(playerResult);
+  }
   determineWinner();
   enable(gameButton);
   disable(showButton);
@@ -569,7 +566,6 @@ function determineWinner() {
   for (let i = 0; i < playerList.length; i++) {
     if (playerList[i].winner) {
       let winner = `${playerList[i].name} is the winner`;
-      console.log(winner);
       logEvent(winner);
     }
   }
@@ -621,15 +617,12 @@ function firstRollAI(i) {
     );
     if (playerList[i].confidence >= 25) {
       raise(i);
-      console.log(`${playerList[i].name} has raised`);
       logRaise(playerList[i]);
     } else if (playerList[i].confidence < 25 && playerList[i].confidence > 15) {
       bet(i);
-      console.log(`${playerList[i].name} has betted`);
       logBet(playerList[i]);
     } else {
       fold(i);
-      console.log(`${playerList[i].name} has folded`);
       logFold(playerList[i]);
     } // no idea how to implement see yet
   } else {
@@ -650,15 +643,12 @@ function secondRollAI(i) {
     );
     if (playerList[i].confidence >= 40) {
       raise(i);
-      console.log(`${playerList[i].name} has raised`);
       logRaise(playerList[i]);
     } else if (playerList[i].confidence < 39 && playerList[i].confidence > 15) {
       bet(i);
-      console.log(`${playerList[i].name} has betted`);
       logBet(playerList[i]);
     } else {
       fold(i);
-      console.log(`${playerList[i].name} has folded`);
       logFold(playerList[i]);
     } // no idea how to implement see yet
   } else {
@@ -677,15 +667,12 @@ function finalRollAI(i) {
     );
     if (playerList[i].confidence >= 40) {
       raise(i);
-      console.log(`${playerList[i].name} has raised`);
       logRaise(playerList[i]);
     } else if (playerList[i].confidence < 39 && playerList[i].confidence > 15) {
       bet(i);
-      console.log(`${playerList[i].name} has betted`);
       logBet(playerList[i]);
     } else {
       fold(i);
-      console.log(`${playerList[i].name} has folded`);
       logFold(playerList[i]);
     } // no idea how to implement see yet
   } else {
