@@ -95,7 +95,7 @@ gameButton.addEventListener("click", function () {
   disable(gameButton);
   enable(playerRollButton);
   clearHands();
-  logEvent("A new game has started!")
+  logEvent("A new game has started!");
   return gameCounter;
 });
 
@@ -111,7 +111,7 @@ gameButton.addEventListener("click", function () {
       playerListDisplay.appendChild(li);
     }
   } else {
-    playerList.unshift(playerList.pop()); //need to test this
+    //playerList.unshift(playerList.pop()); //need to test this
     roundCount();
   }
 
@@ -119,7 +119,6 @@ gameButton.addEventListener("click", function () {
   playerRollDisplay.textContent = null;
   playerHandNumberDisplay.textContent = null;
   playerHandNameDisplay.textContent = null;
-
   return (isStartofGame = false);
 });
 
@@ -133,7 +132,7 @@ playerRollButton.addEventListener("click", function () {
   playerHandNumberDisplay.textContent = playerList[0].hand;
   disable(playerRollButton);
   enableActionButtons();
-  logEvent("Players have rolled their dice.")
+  logEvent("Players have rolled their dice.");
 
   for (let i = 0; i < playerList.length; i++) {
     calculateValueScore(playerList[i].hand, i);
@@ -158,7 +157,7 @@ communalRollButton1.addEventListener("click", function () {
 
   disable(communalRollButton1);
   enableActionButtons();
-  logEvent("The first communal dice is rolled.")
+  logEvent("The first communal dice is rolled.");
 
   for (let i = 0; i < playerList.length; i++) {
     playerList[i].hand.push(communalRoll1[0]);
@@ -194,7 +193,7 @@ communalRollButton2.addEventListener("click", function () {
   disable(communalRollButton2);
   enableActionButtons();
 
-  logEvent("The second communal dice is rolled.")
+  logEvent("The second communal dice is rolled.");
 
   for (let i = 0; i < playerList.length; i++) {
     playerList[i].hand.push(communalRoll2[0]);
@@ -259,7 +258,7 @@ betButton.addEventListener("click", function () {
 
 //The show button determines the final winner for the game
 showButton.addEventListener("click", function () {
-  logEvent("Remaining players have shown their dice")
+  logEvent("Remaining players have shown their dice");
   determineWinner();
   enable(gameButton);
   disable(showButton);
@@ -623,12 +622,15 @@ function firstRollAI(i) {
     if (playerList[i].confidence >= 25) {
       raise(i);
       console.log(`${playerList[i].name} has raised`);
+      logRaise(playerList[i]);
     } else if (playerList[i].confidence < 25 && playerList[i].confidence > 15) {
       bet(i);
       console.log(`${playerList[i].name} has betted`);
+      logBet(playerList[i]);
     } else {
       fold(i);
       console.log(`${playerList[i].name} has folded`);
+      logFold(playerList[i]);
     } // no idea how to implement see yet
   } else {
     playingRoundCounter -= 1;
@@ -649,12 +651,15 @@ function secondRollAI(i) {
     if (playerList[i].confidence >= 40) {
       raise(i);
       console.log(`${playerList[i].name} has raised`);
+      logRaise(playerList[i]);
     } else if (playerList[i].confidence < 39 && playerList[i].confidence > 15) {
       bet(i);
       console.log(`${playerList[i].name} has betted`);
+      logBet(playerList[i]);
     } else {
       fold(i);
       console.log(`${playerList[i].name} has folded`);
+      logFold(playerList[i]);
     } // no idea how to implement see yet
   } else {
     playingRoundCounter -= 1;
@@ -673,12 +678,15 @@ function finalRollAI(i) {
     if (playerList[i].confidence >= 40) {
       raise(i);
       console.log(`${playerList[i].name} has raised`);
+      logRaise(playerList[i]);
     } else if (playerList[i].confidence < 39 && playerList[i].confidence > 15) {
       bet(i);
       console.log(`${playerList[i].name} has betted`);
+      logBet(playerList[i]);
     } else {
       fold(i);
       console.log(`${playerList[i].name} has folded`);
+      logFold(playerList[i]);
     } // no idea how to implement see yet
   } else {
     playingRoundCounter -= 1;
@@ -699,10 +707,11 @@ function confidenceModifier() {
   return confidenceMod;
 }
 
-//Function to increment rounds or set them to zero during play - this has replaced the round button so it can happen automatically
+//Function to increment rounds or set them to zero during play - this has replaced the round button so it can happen automatically, also sets the current bet back to 0
 function roundCount() {
   if (roundCounter < 3) {
     roundCounter++;
+    currentBet = 0;
   } else {
     roundCounter = 0;
   }
@@ -734,9 +743,29 @@ function rollButtonPerRound() {
 function logBet(player) {
   const gameLog = document.getElementById("gameLog");
   const logElem = document.createElement("div");
-  
+
   logElem.textContent = player.name + " has betted $5";
-  gameLog.insertBefore(logElem, gameLog.firstChild)
+  gameLog.insertBefore(logElem, gameLog.firstChild);
+  //document.getElementById("gameLog").appendChild(logElem);
+}
+
+//Function to log raise values of a player
+function logRaise(player) {
+  const gameLog = document.getElementById("gameLog");
+  const logElem = document.createElement("div");
+
+  logElem.textContent = player.name + " has raised $10";
+  gameLog.insertBefore(logElem, gameLog.firstChild);
+  //document.getElementById("gameLog").appendChild(logElem);
+}
+
+//Function to log the fold of a player
+function logFold(player) {
+  const gameLog = document.getElementById("gameLog");
+  const logElem = document.createElement("div");
+
+  logElem.textContent = player.name + " has folded";
+  gameLog.insertBefore(logElem, gameLog.firstChild);
   //document.getElementById("gameLog").appendChild(logElem);
 }
 
@@ -744,7 +773,7 @@ function logBet(player) {
 function logEvent(event) {
   const gameLog = document.getElementById("gameLog");
   const logElem = document.createElement("div");
-  
+
   logElem.textContent = event;
   gameLog.insertBefore(logElem, gameLog.firstChild);
 }
