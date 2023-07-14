@@ -228,32 +228,17 @@ betButton.addEventListener("click", function () {
   rollButtonPerRound();
   disableActionButtons();
 
-  for (let i = 0; i < playerList.length; i++) {
-    pot += 5;
-  }
+  playerList[0].money -= 5;
+  playerMoneyDisplay.textContent = playerList[0].money;
+
+  // if (playerList[0].money < 5) {
+  //   disableActionButtons();
+  // }
+  pot += 5;
   potDisplay.textContent = pot;
 
   logBet(playerList[0]);
-
-  return pot;
-});
-
-//Additional listener for the bet button which removed player money when they bet
-betButton.addEventListener("click", function () {
-  //playerList[0].money -= 5;
-
-  //bets the same for each player - will be changed
-  for (let i = 0; i < playerList.length; i++) {
-    playerList[i].money -= 5;
-  }
-
-  if (playerList[0].money < 5) {
-    disableActionButtons();
-  }
   updateMoney();
-  playerMoneyDisplay.textContent = playerList[0].money;
-  updateMoney();
-  //return playerMoney;
 });
 
 //The show button determines the final winner for the game
