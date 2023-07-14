@@ -266,7 +266,7 @@ function bet(i) {
   if (currentBet == 0 || currentBet == 5) {
     currentBet += 5;
   }
-
+  updateMoney();
   potDisplay.textContent = pot;
   return pot;
 }
@@ -282,7 +282,7 @@ function raise(i) {
     pot += 5;
     currentBet += 5;
   }
-
+  updateMoney();
   potDisplay.textContent = pot;
   return pot;
 }
