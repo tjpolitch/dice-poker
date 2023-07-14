@@ -292,10 +292,14 @@ function fold(i) {
   playerList[i].playingRound = false;
 }
 
-// removing this for now as it might be possible to just use the bet function repeatedly
-// function see(i){
-//     playerList[i].money
-// }
+// Sees the current bet
+function see(i) {
+  playerList[i].money -= currentBet;
+  pot += currentBet;
+  updateMoney();
+  potDisplay.textContent = pot;
+  return pot;
+}
 
 //Enables buttons with the class of action button (bet, raise, fold, see)
 function enableActionButtons() {
