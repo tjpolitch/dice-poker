@@ -44,6 +44,7 @@ const potDisplay = document.querySelector("#pot");
 const playerMoneyDisplay = document.querySelector("#playerMoney");
 
 const playerListDisplay = document.querySelector("#playerList");
+const playersMoneyDisplay = document.querySelector("#playersMoney");
 
 const communalRollDisplay = document.querySelector("#communalRoll");
 const communalRollButton1 = document.querySelector("#rollButtonC1");
@@ -109,6 +110,11 @@ gameButton.addEventListener("click", function () {
       let li = document.createElement("li");
       li.innerText = playerList[i].name;
       playerListDisplay.appendChild(li);
+    }
+    for (let i = 0; i < playerList.length; i++) {
+      let li = document.createElement("li");
+      li.innerText = "$" + playerList[i].money;
+      playersMoneyDisplay.appendChild(li);
     }
   } else {
     //playerList.unshift(playerList.pop()); //need to test this
@@ -244,7 +250,9 @@ betButton.addEventListener("click", function () {
   if (playerList[0].money < 5) {
     disableActionButtons();
   }
+  updateMoney();
   playerMoneyDisplay.textContent = playerList[0].money;
+  updateMoney();
   //return playerMoney;
 });
 
@@ -562,7 +570,7 @@ function determineWinner() {
     }
   }
 
-  // print the winners - this can be shortened
+  // log the winners
   for (let i = 0; i < playerList.length; i++) {
     if (playerList[i].winner) {
       let winner = `${playerList[i].name} is the winner`;
@@ -594,6 +602,7 @@ function payout() {
   }
 
   playerMoneyDisplay.textContent = playerList[0].money;
+  updateMoney();
 
   pot = 0;
   potDisplay.textContent = pot;
@@ -629,8 +638,6 @@ function firstRollAI(i) {
     playingRoundCounter -= 1;
   }
 }
-
-// need to increase the confidence if others have folded - will create an isPlaying counter
 
 //Function to see if AI opponents will either bet, raise, fold, see - this will be adjusted for turns later - maybe can combine functions later
 function secondRollAI(i) {
@@ -763,4 +770,19 @@ function logEvent(event) {
 
   logElem.textContent = event;
   gameLog.insertBefore(logElem, gameLog.firstChild);
+}
+
+//Function to update the money in the playersMoneyDisplay for each player
+function updateMoney() {
+  //Selects list and deletes each item
+  let li = document.getElementById("playersMoney");
+  while (li.firstChild) {
+    li.removeChild(li.firstChild);
+  }
+  //Creates a new list and adds each players money - this can later be split into a smaller function
+  for (let i = 0; i < playerList.length; i++) {
+    let li = document.createElement("li");
+    li.innerText = "$" + playerList[i].money;
+    playersMoneyDisplay.appendChild(li);
+  }
 }
