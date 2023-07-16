@@ -118,8 +118,9 @@ gameButton.addEventListener("click", function () {
     }
   } else {
     //playerList.unshift(playerList.pop()); //need to test this
-    roundCount();
+    //roundCount();
   }
+  roundCount()
 
   communalRollDisplay.textContent = null;
   playerRollDisplay.textContent = null;
@@ -683,10 +684,10 @@ function confidenceModifier() {
 function roundCount() {
   if (roundCounter < 3) {
     roundCounter++;
-    currentBet = 0;
   } else {
     roundCounter = 0;
   }
+  currentBet = 0;
   roundDisplay.textContent = gameRound[roundCounter];
   return roundCounter;
 }
