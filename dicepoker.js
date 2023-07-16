@@ -264,7 +264,7 @@ function bet(i) {
   pot += 5;
 
   if (currentBet == 0 || currentBet == 5) {
-    currentBet += 5;
+    currentBet = 5;
   }
   updateMoney();
   potDisplay.textContent = pot;
@@ -275,13 +275,11 @@ function bet(i) {
 function raise(i) {
   if (currentBet == 0) {
     playerList[i].money -= 10;
-    pot += 10;
-    currentBet += 10;
   } else if (currentBet == 5) {
-    playerList[i].money -= 5;
-    pot += 5;
-    currentBet += 5;
+    playerList[i].money -= 10;
   }
+  pot += 10;
+  currentBet += 10;
   updateMoney();
   potDisplay.textContent = pot;
   return pot;
@@ -575,7 +573,7 @@ function determineWinner() {
 function payout() {
   let winnerCount = 0;
   for (let i = 0; i < playerList.length; i++) {
-    if (playerList[i].winner == 2) {
+    if (playerList[i].winner == true) {
       winnerCount++;
     }
   }
@@ -585,23 +583,14 @@ function payout() {
   //potSplit.toFixed(2); // i will need to test this further for when there are three winners
 
   for (let i = 0; i < playerList.length; i++) {
-    if (playerList[i].winner == 2) {
+    if (playerList[i].winner == true) {
       playerList[i].money = playerList[i].money + potSplit;
     }
   }
 
-  playerMoneyDisplay.textContent = playerList[0].money;
   updateMoney();
-
   pot = 0;
   potDisplay.textContent = pot;
-
-  //console log for testing purposes
-  console.log(playerList[0].money);
-  console.log(playerList[1].money);
-  console.log(playerList[2].money);
-  console.log(playerList[3].money);
-  console.log(playerList[4].money);
 }
 
 //Function to see if AI opponents will either bet, raise, fold, see - this will be adjusted for turns later
@@ -774,4 +763,5 @@ function updateMoney() {
     li.innerText = "$" + playerList[i].money;
     playersMoneyDisplay.appendChild(li);
   }
+  playerMoneyDisplay.textContent = playerList[0].money;
 }
