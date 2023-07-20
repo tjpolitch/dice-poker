@@ -116,17 +116,17 @@ gameButton.addEventListener("click", function () {
       li.innerText = "$" + playerList[i].money;
       playersMoneyDisplay.appendChild(li);
     }
+
+    isStartofGame = false;
   } else {
     //playerList.unshift(playerList.pop()); //need to test this
-    //roundCount();
+    //roundCount(); - removed as it was causing issues
   }
-  roundCount()
 
   communalRollDisplay.textContent = null;
   playerRollDisplay.textContent = null;
   playerHandNumberDisplay.textContent = null;
   playerHandNameDisplay.textContent = null;
-  return (isStartofGame = false);
 });
 
 //Button to roll the first three dice for each player and add it to their hand. It also calculates the hand value, hand score, and hand name of their 3-dice roll
@@ -343,7 +343,6 @@ function playersRoll() {
 function rollSort() {
   for (let i = 0; i < playerList.length; i++) {
     playerList[i].hand.sort();
-    // console.log(playerList[i].hand) // this is for testing
   }
 }
 
